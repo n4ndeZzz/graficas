@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>graficas · Berkana 2082</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#06080c; --side:#0a0d13; --card:#0f1421;
+      --bdr:#1a2232; --acc:#1a6fd4; --ach:#4db6f7;
+      --txt:#dce8f5; --mut:#566880;
+      --grn:#22c55e; --amb:#f59e0b; --r:7px;
+    }
+    html,body{ height:100%; overflow:hidden;
+      font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;
+      background:var(--bg); color:var(--txt); }
+
+    .app{ display:grid; grid-template-rows:50px 1fr;
+          grid-template-columns:244px 1fr; height:100vh; }
+
+    .hdr{ grid-column:1/-1; display:flex; align-items:center; gap:11px;
+          padding:0 18px; background:var(--side);
+          border-bottom:1px solid var(--bdr); user-select:none; }
+    .hdr-t{ font-size:13px; font-weight:700; letter-spacing:-.3px; }
+    .hdr-s{ font-size:12px; color:var(--mut); }
+    .pill{ font-size:10px; padding:2px 9px; border-radius:99px;
+           background:#1a6fd410; border:1px solid #1a6fd435;
+           color:var(--ach); letter-spacing:.04em; }
+    .hdr-r{ margin-left:auto; }
+    .hdr-a{ font-size:11.5px; color:var(--mut); text-decoration:none;
+            padding:3px 10px; border-radius:var(--r);
+            border:1px solid var(--bdr); transition:color .12s,border-color .12s; }
+    .hdr-a:hover{ color:var(--txt); border-color:var(--acc); }
+
+    aside{ background:var(--side); border-right:1px solid var(--bdr);
+           padding:12px 8px; overflow-y:auto; }
+    .grp{ font-size:9.5px; text-transform:uppercase; letter-spacing:.09em;
+          color:var(--mut); padding:8px 10px 4px; }
+    .grp:first-child{ padding-top:2px; }
+    .nb{ display:flex; align-items:center; gap:8px; padding:7px 9px;
+         border-radius:var(--r); cursor:pointer; margin-bottom:1px;
+         border:1px solid transparent; transition:background .1s,border-color .1s; }
+    .nb:hover{ background:var(--card); border-color:var(--bdr); }
+    .nb.on{ background:#1a6fd410; border-color:#1a6fd435; }
+    .nn{ font-size:9.5px; font-weight:700; color:var(--mut); min-width:16px; }
+    .nb.on .nn{ color:var(--ach); }
+    .ni{ font-size:14px; min-width:18px; text-align:center; }
+    .ninfo{ flex:1; min-width:0; }
+    .nm{ font-size:11.5px; font-weight:500;
+         white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .nb.on .nm{ color:#90caf9; }
+    .nt{ font-size:10px; color:var(--mut); margin-top:1px; }
+    .dot{ width:7px; height:7px; border-radius:50%; flex-shrink:0;
+          background:var(--bdr); transition:background .3s; }
+    .dot.ok{ background:var(--grn); }
+    .dot.pend{ background:var(--amb); }
+
+    main{ display:flex; flex-direction:column; overflow:hidden; }
+    .cbar{ padding:8px 18px; display:flex; align-items:center; gap:10px;
+           border-bottom:1px solid var(--bdr); min-height:42px; flex-shrink:0; }
+    .ct{ font-size:13px; font-weight:600; }
+    .cs{ font-size:10.5px; color:var(--mut); margin-top:1px; }
+    .cbar-r{ margin-left:auto; }
+    .abtn{ font-size:11px; padding:4px 10px; border-radius:6px;
+           border:1px solid var(--bdr); background:var(--card);
+           color:var(--mut); cursor:pointer; text-decoration:none;
+           font-family:inherit; transition:color .1s,border-color .1s; }
+    .abtn:hover{ color:var(--txt); border-color:var(--acc); }
+
+    .wrap{ flex:1; position:relative; overflow:hidden; }
+    #frame{ width:100%; height:100%; border:none; background:#07090e; display:none; }
+
+    .ov{ position:absolute; inset:0; display:flex; flex-direction:column;
+         align-items:center; justify-content:center;
+         gap:14px; padding:32px; background:var(--bg); }
+    #notFound{ display:none; }
+    .big{ font-size:48px; line-height:1; }
+    .ov h2{ font-size:17px; font-weight:600; text-align:center; }
+    .ov p{ font-size:13px; color:var(--mut); text-align:center;
+           max-width:400px; line-height:1.6; }
+    .code-tag{ font-size:11px; font-family:'Consolas','Courier New',monospace;
+               background:var(--card); border:1px solid var(--bdr);
+               border-radius:6px; padding:8px 14px; color:var(--ach); }
+
+    .keys{ position:fixed; bottom:14px; right:18px;
+           display:flex; gap:6px; align-items:center;
+           font-size:10.5px; color:var(--mut); }
+    .key{ padding:2px 6px; border:1px solid var(--bdr); border-radius:4px;
+          background:var(--card); font-family:monospace; font-size:11px; }
+
+    @media(max-width:640px){
+      .app{ grid-template-columns:1fr; grid-template-rows:50px auto 1fr; }
+      aside{ border-right:none; border-bottom:1px solid var(--bdr);
+             padding:8px; overflow-x:auto; overflow-y:hidden;
+             display:flex; gap:4px; }
+      .grp{ display:none; }
+      .nb{ min-width:140px; flex-shrink:0; }
+      .keys{ display:none; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <header class="hdr">
+    <span class="hdr-t">graficas</span>
+    <span class="hdr-s">· Berkana 2082</span>
+    <span class="pill">Interactivos II · UPB</span>
+    <div class="hdr-r">
+      <a class="hdr-a" href="https://github.com/tuusuario/graficas" target="_blank">GitHub ↗</a>
+    </div>
+  </header>
+
+  <aside>
+    <div class="grp">Índices globales</div>
+    <div class="nb" onclick="show(0)">
+      <span class="nn">01</span><span class="ni">▬</span>
+      <div class="ninfo"><div class="nm">Poder global</div><div class="nt">Barras horizontales</div></div>
+      <div class="dot" id="d0"></div>
+    </div>
+    <div class="nb" onclick="show(1)">
+      <span class="nn">02</span><span class="ni">⊟</span>
+      <div class="ninfo"><div class="nm">Adaptación biológica</div><div class="nt">Barras agrupadas</div></div>
+      <div class="dot" id="d1"></div>
+    </div>
+
+    <div class="grp">Composición</div>
+    <div class="nb" onclick="show(2)">
+      <span class="nn">03</span><span class="ni">◉</span>
+      <div class="ninfo"><div class="nm">Atmósfera 2082</div><div class="nt">Torta (pie chart)</div></div>
+      <div class="dot" id="d2"></div>
+    </div>
+    <div class="nb" onclick="show(3)">
+      <span class="nn">04</span><span class="ni">◎</span>
+      <div class="ninfo"><div class="nm">Economía Aerhyn</div><div class="nt">Dona (donut)</div></div>
+      <div class="dot" id="d3"></div>
+    </div>
+
+    <div class="grp">Evolución temporal</div>
+    <div class="nb" onclick="show(4)">
+      <span class="nn">05</span><span class="ni">∿</span>
+      <div class="ninfo"><div class="nm">Hydraether 1986–2082</div><div class="nt">Línea sigmoide</div></div>
+      <div class="dot" id="d4"></div>
+    </div>
+    <div class="nb" onclick="show(5)">
+      <span class="nn">06</span><span class="ni">✕</span>
+      <div class="ninfo"><div class="nm">Evolución Homo</div><div class="nt">Doble línea cruzada</div></div>
+      <div class="dot" id="d5"></div>
+    </div>
+
+    <div class="grp">Mapas</div>
+    <div class="nb" onclick="show(6)">
+      <span class="nn">07</span><span class="ni">🌍</span>
+      <div class="ninfo"><div class="nm">HAE por sector</div><div class="nt">Mapa mundial</div></div>
+      <div class="dot" id="d6"></div>
+    </div>
+    <div class="nb" onclick="show(7)">
+      <span class="nn">08</span><span class="ni">🏙️</span>
+      <div class="ninfo"><div class="nm">Sectores Aerhyn</div><div class="nt">Mapa de zonas</div></div>
+      <div class="dot" id="d7"></div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="cbar">
+      <div>
+        <div class="ct" id="cT">Galería de visualizaciones</div>
+        <div class="cs" id="cS">graficas · 8 animaciones SVG · Berkana 2082</div>
+      </div>
+      <div class="cbar-r">
+        <a class="abtn" id="openBtn" href="#" target="_blank" style="display:none">Abrir sola ↗</a>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="ov" id="welcome">
+        <div class="big">📊</div>
+        <h2>graficas · Berkana 2082</h2>
+        <p>8 visualizaciones animadas SVG. Selecciona cualquier gráfica en el panel lateral para previsualizarla.</p>
+        <div class="code-tag">Proyecto Interactivos II · UPB Medellín</div>
+      </div>
+      <div class="ov" id="notFound">
+        <div class="big">📁</div>
+        <h2>Archivo no encontrado</h2>
+        <p>Verifica que este archivo esté en la misma carpeta que el <code>index.html</code>.</p>
+        <div class="code-tag" id="nfFile">archivo.html</div>
+      </div>
+      <iframe id="frame" title="Gráfica animada"></iframe>
+    </div>
+  </main>
+
+</div>
+<div class="keys">
+  <span class="key">↑</span><span class="key">↓</span>
+  <span>navegar</span>
+</div>
+
+<script>
+const C=[
+  {t:'Índice de poder global',         s:'IPG 1986 vs 2082 · Barras horizontales agrupadas',      f:'indice_poder_global_animated.html'},
+  {t:'Índice de adaptación biológica', s:'4 especies · 5 adaptaciones · Barras agrupadas',         f:'indice_adaptacion_biologica_animated.html'},
+  {t:'Composición atmosférica 2082',   s:'5 gases · Torta SVG animada',                            f:'composicion_atmosferica_2082_animated.html'},
+  {t:'Poder en economía global de Aerhyn', s:'Sectores productivos · Dona animada',               f:'poder_economia_aerhyn_2082_animated.html'},
+  {t:'Concentración de Hydraether 1986–2082', s:'Curva sigmoide · stroke-dashoffset',             f:'concentracion_hydraether_1986_2082_animated.html'},
+  {t:'Evolución Homo sapiens / Homo Aeris',  s:'Cruce demográfico ~2048 · Doble línea SVG',       f:'evolucion_homo_sapiens_homo_aeris_animated.html'},
+  {t:'Concentración HAE por sector — Mapa mundial', s:'Proyección equirectangular · 8 burbujas',  f:'concentracion_hae_mapa_mundial_v2.html'},
+  {t:'Sectores urbanos Aerhyn',        s:'Resonador Ω · Zona Umbral · Emulsión · Reactor 4',       f:'sectores_urbanos_aerhyn_mapa_zonas.html'},
+];
+
+let cur=-1;
+
+async function checkFiles(){
+  for(let i=0;i<C.length;i++){
+    try{
+      const r=await fetch(C[i].f,{method:'HEAD',cache:'no-store'});
+      document.getElementById('d'+i).className='dot '+(r.ok?'ok':'pend');
+    }catch{ document.getElementById('d'+i).className='dot pend'; }
+  }
+}
+
+function show(i){
+  document.querySelectorAll('.nb').forEach((el,j)=>el.classList.toggle('on',j===i));
+  document.getElementById('cT').textContent=C[i].t;
+  document.getElementById('cS').textContent=C[i].s;
+  const ob=document.getElementById('openBtn');
+  ob.href=C[i].f; ob.style.display='';
+
+  const fr=document.getElementById('frame');
+  document.getElementById('welcome').style.display='none';
+  document.getElementById('notFound').style.display='none';
+  fr.style.display='none';
+
+  fetch(C[i].f,{method:'HEAD',cache:'no-store'})
+    .then(r=>{
+      if(r.ok){ fr.src=C[i].f; fr.style.display='block';
+        document.getElementById('d'+i).className='dot ok'; }
+      else throw 0;
+    }).catch(()=>{
+      document.getElementById('nfFile').textContent=C[i].f;
+      document.getElementById('notFound').style.display='flex';
+      document.getElementById('d'+i).className='dot pend';
+    });
+  cur=i;
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowDown'||e.key==='ArrowRight') show(Math.min(7,cur<0?0:cur+1));
+  else if(e.key==='ArrowUp'||e.key==='ArrowLeft') show(Math.max(0,cur<0?0:cur-1));
+});
+
+checkFiles();
+</script>
+</body>
+</html>
