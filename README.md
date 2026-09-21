@@ -2,7 +2,7 @@
 
 **8 visualizaciones animadas SVG** del universo Berkana 2082 — Proyecto Interactivos II, UPB Medellín.
 
-🔗 **[tuusuario.github.io/graficas](https://tuusuario.github.io/graficas)**
+🔗 **[n4ndeZzz.github.io/graficas](https://tuusuario.github.io/graficas)**
 
 ---
 
